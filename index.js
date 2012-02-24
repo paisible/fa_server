@@ -28,5 +28,10 @@ app.configure(function() {
 app.get('/', function(req, res){
 	res.render('index.html');
 });
+app.get('/views/vault.html', function(req,res){
+	res.header('Access-Control-Allow-Origin','*');
+	res.contentType('text/plain');
+	res.render('views/vault.html');
+});
 
 app.listen(3000);

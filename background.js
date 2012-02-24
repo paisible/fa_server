@@ -2,10 +2,10 @@ is_chrome = typeof chrome != "undefined";
 
 
 var Background = function(){
-	self = this;
-	this.version = 2; // get version from server
-	this.state = { version: this.version };
-		
+	// FF framework - set in widget.js
+	this.framework = null;
+	
+	this.state = {};
 	this.tabs = {};
 	
 	this.add_tab = function(url){ this.tabs[url] = true;};
@@ -21,12 +21,9 @@ var Background = function(){
 				return JSON.parse(this.framework.loadFile("v"));
 			}
 		}catch(exception){
-			alert(exception);
+			console.log("Error getting version from disk")
 		}
 	}
-	
-	// FF framework - set in widget.js
-	this.framework = null;
 	
 };
 
@@ -43,14 +40,13 @@ function poll_version(){
 	};
 	$.ajax({
 		type: 'GET',
-		url : 'http://localhost:3000/v.json',
+		url : 'http://localtest.com:3000/v.json',
 		success: cb
 	});
 	setTimeout("poll_version()", 10000);
 }
 
 poll_version();
-
 
 // first time we load, create state
 background = new Background();

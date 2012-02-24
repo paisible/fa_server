@@ -1,16 +1,38 @@
-(function() {
+define(function(){
     var templateLoader = {
       templateVersion: "0.0.1",
       templates: {},
       loadRemoteTemplate: function(templateName, filename, callback) {
 		if (!this.templates[templateName]) {
           var self = this;
-          jQuery.get(filename, function(data) {
-            self.addTemplate(templateName, data);
-            //self.saveLocalTemplates();
-            callback(data);
-          });
+		  var cb = function(data){
+			self.addTemplate(templateName,data);
+			callback(data);
+		  };
+		  var error = function(data){
+			var output = '';
+			for (property in data) {
+			  output += property + ': ' + data[property]+'; ';
+			}
+		  }
+		
+			if ($.browser.msie && window.XDomainRequest) {
+		            // Use Microsoft XDR
+		            var xdr = new XDomainRequest();
+		            xdr.open("get", filename);
+		            xdr.onload = function() {
+						cb(xdr.responseText);
+		            };
+		            xdr.send();
+		        } 
+		else
+		  $.ajax({
+			url : filename,
+			success : cb,
+			error : error
+		  });
         }
+
         else {
           callback(this.templates[templateName]);
         }
@@ -56,5 +78,6 @@
         }
       }
     };
-    window.templateLoader = templateLoader;
-})();
+    return templateLoader;
+	//window.templateLoader = templateLoader;
+})
